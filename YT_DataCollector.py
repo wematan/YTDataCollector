@@ -1,6 +1,6 @@
 import signal
 import time
-import youtube_dl
+import subprocess
 import os
 import argparse
 import threading
@@ -29,6 +29,7 @@ class recordingThread (threading.Thread):
         self.maxSize = self.bufferSize*1024*50 # 10 MB videos
         self.livestreamer = Livestreamer()
         self.numOfIndexes = 5
+        self.outFiles = []
 
         self.yt_stream = yt_stream.strip('\'"')
 
@@ -45,7 +46,9 @@ class recordingThread (threading.Thread):
             bestStream = available_streams['best']
             stream_obj = bestStream.open()
             for i in range(self.numOfIndexes):
-                outVid = open(output_location.replace(".mp4", "_"+str(i)+".mp4"), 'ab')
+                outFileName = output_location.replace(".mp4", "_" + str(i) + ".mp4")
+                self.outFiles.append(outFileName)
+                outVid = open(outFileName, 'ab')
                 currByteCount = 0
                 while currByteCount < self.maxSize:
                     data = stream_obj.read(512*1024)
@@ -70,6 +73,15 @@ class recordingThread (threading.Thread):
         print self.name + " Re-encoding..."
         self.reencode()
         print self.name + " Re-encoding Done."
+
+    def reencode(self):
+        CMD = "ffmpeg -i {0} -map 0 -flags global_header -c:v libx264  -crf 23 -strict experimental -profile:v baseline {1}_converted.mp4"
+        for file in self.outFiles:
+            inputFile = file
+            outputFile = os.path.splitext(file)[0]
+            formatted_cmd = CMD.format(inputFile, outputFile)
+            p = subprocess.call(formatted_cmd, shell=True)
+            os.remove(inputFile)
 
 if __name__ == "__main__":
     argparser = argparse.ArgumentParser(description='Data Collection Tool.')
