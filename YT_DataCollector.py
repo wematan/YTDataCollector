@@ -1,4 +1,3 @@
-import signal
 import time
 import subprocess
 import os
@@ -8,8 +7,9 @@ try:
     import ConfigParser
     from livestreamer import Livestreamer
     from livestreamer.exceptions import LivestreamerError
-except:
+except Exception as e:
     print "Your missing dependencies Please run depends_tool.py from SVN repo under Tools."
+    print e
     exit(1)
 
 
