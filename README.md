@@ -1,4 +1,4 @@
-"# YTDataCollector" 
+<H1> YTDataCollector
 
 YouTube Data Collector is a python script that recives a ini config file as its argument
 And downloads and re-encodes youtube live streams that were specified in the config file.
