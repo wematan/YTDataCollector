@@ -8,14 +8,13 @@ try:
     from livestreamer import Livestreamer
     from livestreamer.exceptions import LivestreamerError
 except Exception as e:
+    import pip
+    pip.main('install',['livestreamer', ConfigParser])
     print "Your missing dependencies Please run depends_tool.py from SVN repo under Tools."
     print e
     exit(1)
 
-
 NAME_FORMAT = format("{output_location}\{name}_{time}.mp4")
-COMMAND_FORMAT = format("D:\work\Livestreamer\livestreamer.exe -a="" -p=\"ffmpeg -i - {0}\" -v {1} best")
-
 
 class recordingThread (threading.Thread):
     def __init__(self, threadID, output_location, name, yt_stream, start_time):
